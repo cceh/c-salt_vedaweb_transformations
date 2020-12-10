@@ -490,7 +490,7 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
                 # stanza properties
                 set_stanza_properties(verse_container=verse_container,
                                       verse_in_stanza_properties=stanza_properties.get(
-                                          verse_id_tei),
+                                          verse_id),
                                       verse_id_tei=verse_id_tei)
 
                 # strata
