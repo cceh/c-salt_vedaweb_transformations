@@ -370,19 +370,17 @@ def set_zurich_info(pada_dict, verse_container, matched_lemmata, leipzig_mapping
 
             for k, v in basic.items():
                 try:
-                    if v is not None and v != '':
-                        mapping = leipzig_mapping.get(v)
+                    if v:
+                        mapping = leipzig_mapping.get(utils.clean_up_morpho_info(v))
                         if mapping:
-                            if mapping[1] != '' and mapping[1] != ' ' and mapping[1] is not None:
-                                # print('mapping[1]', mapping[1])
-                                f_gloss = etree.SubElement(fs_leipzig, 'f')
-                                f_gloss.attrib['name'] = mapping[1]
-                                f_gloss_symbol = etree.SubElement(
-                                    f_gloss, 'symbol')
-                                f_gloss_symbol.attrib['value'] = mapping[0]
-                            else:
-                                print('no_mapping', verse_id_tei,
-                                      token_form, k, v)
+                            f_gloss = etree.SubElement(fs_leipzig, 'f')
+                            f_gloss.attrib['name'] = mapping[1]
+                            f_gloss_symbol = etree.SubElement(
+                                f_gloss, 'symbol')
+                            f_gloss_symbol.attrib['value'] = mapping[0]
+                        else:
+                            print('no_mapping_1', fs_id,
+                                  "token #{}#".format(token_form), "k #{}#".format(k), "v #{}#".format(v))
                     else:
                         if k == 'evi':
                             continue
@@ -390,35 +388,36 @@ def set_zurich_info(pada_dict, verse_container, matched_lemmata, leipzig_mapping
                         best_of = token.get(searched_best_of)
                         best_of = best_of.split('/')
                         if len(best_of) == 1:
-                            if best_of[0] != '':
+                            if best_of[0]:
                                 mapping = leipzig_mapping.get(
-                                    best_of[0].strip())
+                                    utils.clean_up_morpho_info(best_of[0]))
                                 if mapping:
                                     f_gloss = etree.SubElement(fs_leipzig, 'f')
                                     f_gloss.attrib['name'] = mapping[1]
                                     f_gloss_symbol = etree.SubElement(
                                         f_gloss, 'symbol')
                                     f_gloss_symbol.attrib['value'] = mapping[0]
+                                else:
+                                    print('no_mapping_2', fs_id,
+                                          "token #{}#".format(token_form), "k #{}#".format(k),
+                                          "best_of[0] #{}#".format(best_of[0]))
 
                         if len(best_of) > 1:
                             f_valt_container = etree.SubElement(
                                 fs_leipzig, 'f')
                             f_valt = etree.SubElement(f_valt_container, 'vAlt')
-                            map = leipzig_mapping.get(best_of[0].strip())
+                            map = leipzig_mapping.get(utils.clean_up_morpho_info(best_of[0]))
                             if map:
                                 f_valt_container.attrib['name'] = map[1]
                                 for b in best_of:
-                                    mapping = leipzig_mapping.get(b.strip())
+                                    mapping = leipzig_mapping.get(utils.clean_up_morpho_info(b))
                                     if mapping:
-                                        if mapping[1] != '' and mapping[1] is not None and mapping[1] != ' ':
-                                            # f_gloss = etree.SubElement(f_valt_container, 'f')
-                                            # f_gloss.attrib['name'] = mapping[1]
-                                            f_gloss_symbol = etree.SubElement(
-                                                f_valt, 'symbol')
-                                            f_gloss_symbol.attrib['value'] = mapping[0]
-                                        else:
-                                            print('no_mapping', verse_id_tei,
-                                                  token_form, k, v)
+                                        f_gloss_symbol = etree.SubElement(
+                                            f_valt, 'symbol')
+                                        f_gloss_symbol.attrib['value'] = mapping[0]
+                                    else:
+                                        print('no_mapping_3', fs_id, "token #{}#".format(token_form),
+                                              "k #{}#".format(k), "b #{}#".format(b))
 
                 except TypeError as e:
                     print(fs_id, e, mapping, k, v)
@@ -464,7 +463,6 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
         book_node.attrib['type'] = 'book'
 
         title.text = 'Rigveda - VedaWeb Version - Book {}'.format(book)
-
 
         print('processing book {}'.format(book))
 
@@ -581,8 +579,7 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
                                      verse_id_tei=verse_id_tei, lang='rus', id='elizarenkova')
 
         et = etree.ElementTree(root)
-        et.write(output_dir + '/rv_book_{}.tei'.format(book),
-                 pretty_print=True, xml_declaration=True, encoding="utf-8")
+        et.write(output_dir + '/rv_book_{}.tei'.format(book), pretty_print=True, xml_declaration=True, encoding="utf-8")
 
 
 def transform_rv(args):
