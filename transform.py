@@ -369,11 +369,11 @@ def set_zurich_info(pada_dict, verse_container, matched_lemmata, leipzig_mapping
             fs_leipzig.attrib['type'] = 'leipzig_glossing_rules'
 
             for k, v in basic.items():
-                mapping = leipzig_mapping.get(v)
                 try:
                     if v is not None and v != '':
+                        mapping = leipzig_mapping.get(v)
                         if mapping:
-                            if mapping[1] != '' and mapping[1] is not None:
+                            if mapping[1] != '' and mapping[1] != ' ' and mapping[1] is not None:
                                 # print('mapping[1]', mapping[1])
                                 f_gloss = etree.SubElement(fs_leipzig, 'f')
                                 f_gloss.attrib['name'] = mapping[1]
@@ -393,32 +393,35 @@ def set_zurich_info(pada_dict, verse_container, matched_lemmata, leipzig_mapping
                             if bestof[0] != '':
                                 mapping = leipzig_mapping.get(
                                     bestof[0].strip())
-                                f_gloss = etree.SubElement(fs_leipzig, 'f')
-                                f_gloss.attrib['name'] = mapping[1]
-                                f_gloss_symbol = etree.SubElement(
-                                    f_gloss, 'symbol')
-                                f_gloss_symbol.attrib['value'] = mapping[0]
+                                if mapping:
+                                    f_gloss = etree.SubElement(fs_leipzig, 'f')
+                                    f_gloss.attrib['name'] = mapping[1]
+                                    f_gloss_symbol = etree.SubElement(
+                                        f_gloss, 'symbol')
+                                    f_gloss_symbol.attrib['value'] = mapping[0]
+
                         if len(bestof) > 1:
                             f_valt_container = etree.SubElement(
                                 fs_leipzig, 'f')
                             f_valt = etree.SubElement(f_valt_container, 'vAlt')
                             map = leipzig_mapping.get(bestof[0].strip())
-                            f_valt_container.attrib['name'] = map[1]
-
-                            for b in bestof:
-                                mapping = leipzig_mapping.get(b.strip())
-                                if mapping[1] != '' and mapping[1] is not None:
-                                    # f_gloss = etree.SubElement(f_valt_container, 'f')
-                                    # f_gloss.attrib['name'] = mapping[1]
-                                    f_gloss_symbol = etree.SubElement(
-                                        f_valt, 'symbol')
-                                    f_gloss_symbol.attrib['value'] = mapping[0]
-                                else:
-                                    print('no_mapping', verse_id_tei,
-                                          token_form, k, v)
+                            if map:
+                                f_valt_container.attrib['name'] = map[1]
+                                for b in bestof:
+                                    mapping = leipzig_mapping.get(b.strip())
+                                    if mapping:
+                                        if mapping[1] != '' and mapping[1] is not None and mapping[1] != ' ':
+                                            # f_gloss = etree.SubElement(f_valt_container, 'f')
+                                            # f_gloss.attrib['name'] = mapping[1]
+                                            f_gloss_symbol = etree.SubElement(
+                                                f_valt, 'symbol')
+                                            f_gloss_symbol.attrib['value'] = mapping[0]
+                                        else:
+                                            print('no_mapping', verse_id_tei,
+                                                  token_form, k, v)
 
                 except TypeError as e:
-                    print(verse_id_tei, e)
+                    print(fs_id, e, mapping, k, v)
 
 
 def set_header(root):
@@ -436,8 +439,8 @@ def set_header(root):
     source_desc = etree.SubElement(file_desc, 'sourceDesc')
     p_source_desc = etree.SubElement(source_desc, 'p')
     p_source_desc.text = 'For more information regarding sources and their licences, please see: '
-    #header_ptr = etree.SubElement(p_source_desc, 'ptr')
-    #header_ptr.attrib['target'] = 'teiCorpus.tei#vedaweb_header'
+    # header_ptr = etree.SubElement(p_source_desc, 'ptr')
+    # header_ptr.attrib['target'] = 'teiCorpus.tei#vedaweb_header'
 
     text_node = etree.SubElement(root, "text")
     body_node = etree.SubElement(text_node, "body")
@@ -583,6 +586,10 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
                  pretty_print=True, xml_declaration=True, encoding="utf-8")
 
 
+def rec_dd():
+    return collections.defaultdict(rec_dd)
+
+
 def transform_rv(args):
     sources_repo = args.sources_repo
     output_dir = args.output_dir
@@ -612,7 +619,7 @@ def transform_rv(args):
             sources_repo + '/rigveda/info/matched_lemmata.json')
 
         # zurich: lubotsky, morphosyntax, lemmata in GRA
-        rv_zur = utils.read_json(
+        rv_zur = utils.read_zurich(
             sources_repo + '/rigveda/versions/zurich.xlsx')
 
         # aufrecht
@@ -679,6 +686,7 @@ def transform_rv(args):
                         mueller=mueller, oldenberg=oldenberg, renou=renou, eichler=eichler,
                         elizarenkova=elizarenkova,
                         matched_lemmata=matched_lemmata, output_dir=output_dir)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
