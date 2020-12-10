@@ -1,9 +1,23 @@
-import collections
 import json
 import pickle
+import collections
+import pandas as pd
+
+def rec_dd():
+    return collections.defaultdict(rec_dd)
 
 
-
+def read_zurich(xls_file):
+    df = pd.read_excel(xls_file)
+    # avoid NaN values with ''
+    df = df.fillna('')
+    j = (df.groupby(['belege::stelleMMSSSRR', 'belege::pada'])
+         .apply(lambda x: x.to_dict('records')))
+    d = rec_dd()
+    for i, r in j.iteritems():
+        verse_id = i[0].split('.')
+        d[verse_id[0]][verse_id[1]][verse_id[2]][i[1]] = r
+    return d
 
 
 def read_json(filename):

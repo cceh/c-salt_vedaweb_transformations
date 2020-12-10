@@ -1,15 +1,10 @@
 import argparse
-import collections
 import unicodedata
 from pathlib import Path
 from lxml import etree
 from titlecase import titlecase
 
 import utils
-
-
-def rec_dd():
-    return collections.defaultdict(rec_dd)
 
 
 def set_addressees(current_dedic, hymn_node):
@@ -613,8 +608,8 @@ def transform_rv(args):
             sources_repo + '/rigveda/info/matched_lemmata.json')
 
         # zurich: lubotsky, morphosyntax, lemmata in GRA
-        rv_zur = utils.deserialize(
-            sources_repo + '/rigveda/versions/zurich.pickle')
+        rv_zur = utils.read_zurich(
+            sources_repo + '/rigveda/versions/zurich.xlsx')
 
         # aufrecht
         aufrecht = utils.read_json(
