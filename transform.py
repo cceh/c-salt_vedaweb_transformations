@@ -387,12 +387,12 @@ def set_zurich_info(pada_dict, verse_container, matched_lemmata, leipzig_mapping
                         if k == 'evi':
                             continue
                         searched_best_of = 'belege::{} bestof'.format(k)
-                        bestof = token.get(searched_best_of)
-                        bestof = bestof.split('/')
-                        if len(bestof) == 1:
-                            if bestof[0] != '':
+                        best_of = token.get(searched_best_of)
+                        best_of = best_of.split('/')
+                        if len(best_of) == 1:
+                            if best_of[0] != '':
                                 mapping = leipzig_mapping.get(
-                                    bestof[0].strip())
+                                    best_of[0].strip())
                                 if mapping:
                                     f_gloss = etree.SubElement(fs_leipzig, 'f')
                                     f_gloss.attrib['name'] = mapping[1]
@@ -400,14 +400,14 @@ def set_zurich_info(pada_dict, verse_container, matched_lemmata, leipzig_mapping
                                         f_gloss, 'symbol')
                                     f_gloss_symbol.attrib['value'] = mapping[0]
 
-                        if len(bestof) > 1:
+                        if len(best_of) > 1:
                             f_valt_container = etree.SubElement(
                                 fs_leipzig, 'f')
                             f_valt = etree.SubElement(f_valt_container, 'vAlt')
-                            map = leipzig_mapping.get(bestof[0].strip())
+                            map = leipzig_mapping.get(best_of[0].strip())
                             if map:
                                 f_valt_container.attrib['name'] = map[1]
-                                for b in bestof:
+                                for b in best_of:
                                     mapping = leipzig_mapping.get(b.strip())
                                     if mapping:
                                         if mapping[1] != '' and mapping[1] is not None and mapping[1] != ' ':
@@ -439,8 +439,8 @@ def set_header(root):
     source_desc = etree.SubElement(file_desc, 'sourceDesc')
     p_source_desc = etree.SubElement(source_desc, 'p')
     p_source_desc.text = 'For more information regarding sources and their licences, please see: '
-    # header_ptr = etree.SubElement(p_source_desc, 'ptr')
-    # header_ptr.attrib['target'] = 'teiCorpus.tei#vedaweb_header'
+    header_ptr = etree.SubElement(p_source_desc, 'ptr')
+    header_ptr.attrib['target'] = 'teiCorpus.tei#vedaweb_header'
 
     text_node = etree.SubElement(root, "text")
     body_node = etree.SubElement(text_node, "body")
@@ -465,7 +465,6 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
 
         title.text = 'Rigveda - VedaWeb Version - Book {}'.format(book)
 
-        ## TODO add schema URL
 
         print('processing book {}'.format(book))
 
@@ -584,10 +583,6 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
         et = etree.ElementTree(root)
         et.write(output_dir + '/rv_book_{}.tei'.format(book),
                  pretty_print=True, xml_declaration=True, encoding="utf-8")
-
-
-def rec_dd():
-    return collections.defaultdict(rec_dd)
 
 
 def transform_rv(args):
