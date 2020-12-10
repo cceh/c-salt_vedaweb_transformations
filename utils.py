@@ -2,6 +2,8 @@ import json
 import pickle
 import collections
 import pandas as pd
+from string import punctuation
+
 
 def rec_dd():
     return collections.defaultdict(rec_dd)
@@ -39,3 +41,14 @@ def serialize(data, filename):
 def deserialize(filename):
     with open(filename, mode='rb') as input:
         return pickle.load(input, encoding='utf-8')
+
+def clean_up_morpho_info(key):
+    key = str(key)
+    # for 1.0 digits a la padas
+    key = key.strip()
+    key = key.rstrip('.0')
+    key = key.lower()
+    key = key.strip(punctuation)
+    return key
+
+
