@@ -30,4 +30,5 @@ dependencies:
     - pytz==2020.4
     - regex==2020.11.13
     - six==1.15.0
-    - titlecase==1.1.1s
+    - titlecase==1.1.1
+    - xlrd==1.2.0
