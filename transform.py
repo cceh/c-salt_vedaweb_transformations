@@ -60,6 +60,7 @@ def set_strata(verse_container, verse_in_strata, verse_id_tei):
             lg_strata_pada.attrib[
                 '{http://www.w3.org/XML/1998/namespace}id'] = verse_id_tei + '_strata_' + sub_verse[0]
             strata_fs = etree.SubElement(lg_strata_pada, "fs")
+            strata_fs.attrib['type'] = 'strata_info'
             strata_label = etree.SubElement(strata_fs, "f")
             strata_t = etree.SubElement(strata_fs, "f")
             strata_label.attrib['name'] = 'label'
@@ -257,6 +258,7 @@ def set_zurich_info(pada_dict, verse_container, matched_lemmata, leipzig_mapping
         for token in pada_dict.get(pada_id):
 
             word = etree.SubElement(l_tokens, "fs")
+            word.attrib['type'] = 'zurich_info'
             # get wortnummer pada (comes as string)
             rc_id = token.get('belege::wortnummer pada')
             # format it
@@ -434,8 +436,8 @@ def set_header(root):
     source_desc = etree.SubElement(file_desc, 'sourceDesc')
     p_source_desc = etree.SubElement(source_desc, 'p')
     p_source_desc.text = 'For more information regarding sources and their licences, please see: '
-    header_ptr = etree.SubElement(p_source_desc, 'ptr')
-    header_ptr.attrib['target'] = 'teiCorpus.tei#vedaweb_header'
+    #header_ptr = etree.SubElement(p_source_desc, 'ptr')
+    #header_ptr.attrib['target'] = 'teiCorpus.tei#vedaweb_header'
 
     text_node = etree.SubElement(root, "text")
     body_node = etree.SubElement(text_node, "body")
@@ -454,7 +456,8 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
             'TEI', attrib={"xmlns": 'http://www.tei-c.org/ns/1.0'})
         body_node, title = set_header(root)
         book_node = etree.SubElement(body_node, 'div')
-        book_node.attrib['{http://www.w3.org/XML/1998/namespace}id'] = book
+        book_id_tei = 'b{}'.format(book)
+        book_node.attrib['{http://www.w3.org/XML/1998/namespace}id'] = book_id_tei
         book_node.attrib['type'] = 'book'
 
         title.text = 'Rigveda - VedaWeb Version - Book {}'.format(book)
@@ -466,7 +469,8 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
         for hymn, v2 in v1.items():
 
             hymn_node = etree.SubElement(book_node, 'div')
-            hymn_node.attrib['{http://www.w3.org/XML/1998/namespace}id'] = book + '_' + hymn
+            hymn_id_tei = book_id_tei + '_h{}'.format(hymn)
+            hymn_node.attrib['{http://www.w3.org/XML/1998/namespace}id'] = hymn_id_tei
             # set grassmann's hymn notation
             hymn_node.attrib['ana'] = str(
                 grassmann_enum.get(book + '.' + hymn))
@@ -478,7 +482,7 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
 
             for verse, v3 in v2.items():
                 # <div xml:id="01_001_001">
-                verse_id_tei = book + '_' + hymn + '_' + verse
+                verse_id_tei = hymn_id_tei + '_' + verse
                 verse_id = book + '.' + hymn + '.' + verse
                 verse_container = etree.SubElement(hymn_node, "div")
                 verse_container.attrib[
@@ -608,7 +612,7 @@ def transform_rv(args):
             sources_repo + '/rigveda/info/matched_lemmata.json')
 
         # zurich: lubotsky, morphosyntax, lemmata in GRA
-        rv_zur = utils.read_zurich(
+        rv_zur = utils.read_json(
             sources_repo + '/rigveda/versions/zurich.xlsx')
 
         # aufrecht
@@ -675,7 +679,6 @@ def transform_rv(args):
                         mueller=mueller, oldenberg=oldenberg, renou=renou, eichler=eichler,
                         elizarenkova=elizarenkova,
                         matched_lemmata=matched_lemmata, output_dir=output_dir)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
