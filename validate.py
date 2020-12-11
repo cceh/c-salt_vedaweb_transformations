@@ -15,9 +15,7 @@ def validate_all(args):
     files = pathlib.Path(path_to_tei_files).glob('*rv_book*')
     for f in files:
         valid = validate(str(f), path_to_tei_files + '/vedaweb.rng')
-        if valid:
-            print(f, valid)
-
+        print(f, valid)
 
 
 if __name__ == "__main__":
