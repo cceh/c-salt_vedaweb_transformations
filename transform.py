@@ -441,7 +441,7 @@ def set_header(root):
     p_source_desc = etree.SubElement(source_desc, 'p')
     p_source_desc.text = 'For more information regarding sources and their licences, please see: '
     header_ptr = etree.SubElement(p_source_desc, 'ptr')
-    header_ptr.attrib['target'] = 'veadweb_corpus.tei#vedaweb_header'
+    header_ptr.attrib['target'] = 'vedaweb_corpus.tei#vedaweb_header'
 
     text_node = etree.SubElement(root, "text")
     body_node = etree.SubElement(text_node, "body")
