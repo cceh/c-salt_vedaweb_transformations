@@ -387,10 +387,12 @@ def set_zurich_info(pada_dict, verse_container, matched_lemmata, leipzig_mapping
                         searched_best_of = 'belege::{} bestof'.format(k)
                         best_of = token.get(searched_best_of)
                         best_of = best_of.split('/')
+                        # clean_up input
+                        best_of = [utils.clean_up_morpho_info(x) for x in best_of if x ]
+                        best_of = [x for x in best_of if x]
                         if len(best_of) == 1:
                             if best_of[0]:
-                                mapping = leipzig_mapping.get(
-                                    utils.clean_up_morpho_info(best_of[0]))
+                                mapping = leipzig_mapping.get(best_of[0])
                                 if mapping:
                                     f_gloss = etree.SubElement(fs_leipzig, 'f')
                                     f_gloss.attrib['name'] = mapping[1]
@@ -406,11 +408,11 @@ def set_zurich_info(pada_dict, verse_container, matched_lemmata, leipzig_mapping
                             f_valt_container = etree.SubElement(
                                 fs_leipzig, 'f')
                             f_valt = etree.SubElement(f_valt_container, 'vAlt')
-                            map = leipzig_mapping.get(utils.clean_up_morpho_info(best_of[0]))
+                            map = leipzig_mapping.get(best_of[0])
                             if map:
                                 f_valt_container.attrib['name'] = map[1]
                                 for b in best_of:
-                                    mapping = leipzig_mapping.get(utils.clean_up_morpho_info(b))
+                                    mapping = leipzig_mapping.get(b)
                                     if mapping:
                                         f_gloss_symbol = etree.SubElement(
                                             f_valt, 'symbol')
