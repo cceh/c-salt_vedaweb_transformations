@@ -1,3 +1,4 @@
+from io import StringIO
 import argparse
 import unicodedata
 from pathlib import Path
@@ -388,7 +389,7 @@ def set_zurich_info(pada_dict, verse_container, matched_lemmata, leipzig_mapping
                         best_of = token.get(searched_best_of)
                         best_of = best_of.split('/')
                         # clean_up input
-                        best_of = [utils.clean_up_morpho_info(x) for x in best_of if x ]
+                        best_of = [utils.clean_up_morpho_info(x) for x in best_of if x]
                         best_of = [x for x in best_of if x]
                         if len(best_of) == 1:
                             if best_of[0]:
@@ -463,8 +464,10 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
         book_id_tei = 'b{}'.format(book)
         book_node.attrib['{http://www.w3.org/XML/1998/namespace}id'] = book_id_tei
         book_node.attrib['type'] = 'book'
-
         title.text = 'Rigveda - VedaWeb Version - Book {}'.format(book)
+
+        root.addprevious(etree.PI('xml-model',
+                                  'href="vedaweb.rng" type="application/xml"  schematypens="http://relaxng.org/ns/structure/1.0"'))
 
         print('processing book {}'.format(book))
 
