@@ -1,4 +1,3 @@
-from io import StringIO
 import argparse
 import unicodedata
 from pathlib import Path
@@ -584,19 +583,64 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
                                      verse_id_tei=verse_id_tei, lang='rus', id='elizarenkova')
 
         et = etree.ElementTree(root)
-        et.write(output_dir + '/rv_book_{}.tei'.format(book), pretty_print=True, xml_declaration=True, encoding="utf-8")
+        et.write('{}/rv_book_{}.tei'.format(output_dir, book), pretty_print=True, xml_declaration=True,
+                 encoding="utf-8")
+
+
+def update_corpus_header(args):
+    sources_repo = args.sources_repo
+    tei_repo = args.tei_repo
+    tei_corpus_file = tei_repo + '/vedaweb_corpus.tei'
+    tree = etree.parse(tei_corpus_file)
+
+    if not tree:
+        raise FileNotFoundError("{} not found".format(tei_corpus_file))
+
+    ns = {"xi": 'http://www.w3.org/2001/XInclude', "tei": "http://www.tei-c.org/ns/1.0"}
+    ##get all files names:
+
+    for elem in Path(sources_repo).rglob('*.*'):
+        if elem.suffix == '.json' or elem.suffix == '.xlsx':
+
+            # print(elem)
+
+            l_path = str(elem.parent).replace(sources_repo.rstrip('/'), '')
+            print(l_path)
+
+            ## get elem by xpath
+            # print(elem.name, elem.stem)
+            xpath_ex = '//*[@xml:id="{}"]'.format(elem.stem)
+            # print(xpath_ex)
+            r = tree.xpath(xpath_ex)
+
+            if r:
+                # print(elem.stem, r[0])
+                publicationStmt_ex = r[0].xpath('./tei:fileDesc/tei:publicationStmt', namespaces=ns)
+
+                # <ptr target="http://github.com/cceh/c-salt_vedaweb_sources"/>
+                ptr = etree.Element("ptr")
+                target = "http://github.com/cceh/c-salt_vedaweb_sources/blob/master{}/{}".format(l_path,
+                                                                                                 elem.name)
+                ptr.attrib['target'] = target
+                publicationStmt_ex[0].append(ptr)
+
+            else:
+                print(elem.stem, "has no id in vedaweb_corpus")
+
+    tree.write('{}/vedaweb_corpus.tei'.format(tei_repo), pretty_print=True, xml_declaration=True,
+               encoding="utf-8")
 
 
 def transform_rv(args):
     sources_repo = args.sources_repo
-    output_dir = args.output_dir
-    Path(args.output_dir).mkdir(parents=True, exist_ok=True)
+    tei_repo = args.tei_repo
+    Path(tei_repo).mkdir(parents=True, exist_ok=True)
 
     if sources_repo:
         sources_repo = sources_repo.rstrip("/")
-        output_dir = output_dir.rstrip("/")
+        tei_repo = tei_repo.rstrip("/")
         print('sources_repo', sources_repo)
-        print('output', output_dir)
+        print('output', tei_repo)
         # info
         addressees = utils.read_json(sources_repo + '/rigveda/info/addressees.json')
 
@@ -625,7 +669,7 @@ def transform_rv(args):
 
         # lubotsky
         lubostky = utils.read_json(
-            sources_repo + '/rigveda/versions/lubostky.json')
+            sources_repo + '/rigveda/versions/lubotsky.json')
 
         # padapatha
         padapatha = utils.read_json(
@@ -682,15 +726,33 @@ def transform_rv(args):
                         grassmann=grassmann, otto=otto, griffith=griffith, macdonell=macdonell,
                         mueller=mueller, oldenberg=oldenberg, renou=renou, eichler=eichler,
                         elizarenkova=elizarenkova,
-                        matched_lemmata=matched_lemmata, output_dir=output_dir)
+                        matched_lemmata=matched_lemmata, output_dir=tei_repo)
+
+        ## actualize commit info into vedaweb_corpus.teo#tei_header
+
+
+def str_to_bool(value):
+    if isinstance(value, bool):
+        return value
+    if value.lower() in {'false', 'f', '0', 'no', 'n'}:
+        return False
+    elif value.lower() in {'true', 't', '1', 'yes', 'y'}:
+        return True
+    raise ValueError(f'{value} is not a valid boolean value')
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('sources_repo',
                         help='path to c-salt_vedaweb_sources')
-    parser.add_argument('output_dir',
+    parser.add_argument('tei_repo',
                         help='path to c-salt_vedaweb_tei or to desired output directory')
+    parser.add_argument('--update_header', help='add github url to src files in TEI header', type=str_to_bool,
+                        nargs='?', const=True, default=False)
 
     args = parser.parse_args()
+
     transform_rv(args)
+
+    if args.update_header:
+        update_corpus_header(args)
