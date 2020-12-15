@@ -593,9 +593,6 @@ def update_corpus_header(args):
     tei_corpus_file = tei_repo + '/vedaweb_corpus.tei'
     tree = etree.parse(tei_corpus_file)
 
-    if not tree:
-        raise FileNotFoundError("{} not found".format(tei_corpus_file))
-
     ns = {"xi": 'http://www.w3.org/2001/XInclude', "tei": "http://www.tei-c.org/ns/1.0"}
     ##get all files names:
 
