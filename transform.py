@@ -3,6 +3,7 @@ import unicodedata
 from pathlib import Path
 from lxml import etree
 from titlecase import titlecase
+from operator import itemgetter
 
 import utils
 
@@ -255,7 +256,9 @@ def set_zurich_info(pada_dict, verse_container, matched_lemmata, leipzig_mapping
         l_tokens.attrib[
             '{http://www.w3.org/XML/1998/namespace}id'] = verse_id_tei + '_zur_' + pada_id + '_tokens'
 
-        for token in pada_dict.get(pada_id):
+        sorted_pada = sorted(pada_dict.get(pada_id), key=itemgetter('belege::wortnummer pada'))
+
+        for token in sorted_pada:
 
             word = etree.SubElement(l_tokens, "fs")
             word.attrib['type'] = 'zurich_info'
