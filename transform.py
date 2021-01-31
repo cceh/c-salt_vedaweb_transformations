@@ -178,13 +178,13 @@ def set_mixed(verse_container, verse, verse_id_tei, lang, source):
             verse_deva.attrib[
                 '{http://www.w3.org/XML/1998/namespace}id'] = '{}_{}'.format(verse_id_tei, source)
             verse_deva.attrib[
-                '{http://www.w3.org/XML/1998/namespace}lang'] = source
+                '{http://www.w3.org/XML/1998/namespace}lang'] = lang
             verse_deva.attrib[
-                'source'] = 'eichler'
+                'source'] = source
 
             deva_pada = etree.SubElement(verse_deva, "l")
             verse_deva.attrib[
-                '{http://www.w3.org/XML/1998/namespace}id'] = verse_id_tei + '{}_{}_0'.format(verse_id_tei, source)
+                '{http://www.w3.org/XML/1998/namespace}id'] = '{}_{}_0'.format(verse_id_tei, source)
             deva_pada.attrib[
                 '{http://www.w3.org/XML/1998/namespace}lang'] = lang
             deva_pada.attrib[
@@ -538,7 +538,7 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
 
                 # deva (eichler)
                 set_mixed(verse_container=verse_container, verse=eichler.get(verse_id),
-                            verse_id_tei=verse_id_tei, lang='san-Deva', source=eichler)
+                            verse_id_tei=verse_id_tei, lang='san-Deva', source='eichler')
 
                 # TRANSLATIONS
 
