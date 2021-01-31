@@ -157,38 +157,38 @@ def set_padapatha(verse_container, verse, verse_id_tei):
     return verse_container
 
 
-def set_eichler(verse_container, verse, verse_id_tei):
+def set_mixed(verse_container, verse, verse_id_tei, lang, source):
     if verse:
-        # some verses have not subverses e.g. 07.034.01
+        # some verses have not subverses e.g. (eichler) 07.034.01; 01.065.01(aufrecht)
         if isinstance(verse[0], list):
             verse_deva = etree.SubElement(verse_container, "lg")
             verse_deva.attrib[
-                '{http://www.w3.org/XML/1998/namespace}id'] = verse_id_tei + '_eichler'
+                '{http://www.w3.org/XML/1998/namespace}id'] = '{}_{}'.format(verse_id_tei, source)
             verse_deva.attrib[
-                '{http://www.w3.org/XML/1998/namespace}lang'] = 'san-Deva'
+                '{http://www.w3.org/XML/1998/namespace}lang'] = lang
             verse_deva.attrib[
-                'source'] = 'eichler'
+                'source'] = source
             for sub_verse in verse:
                 deva_pada = etree.SubElement(verse_deva, "l")
                 deva_pada.attrib[
-                    '{http://www.w3.org/XML/1998/namespace}id'] = verse_id_tei + '_eichler_' + sub_verse[0]
+                    '{http://www.w3.org/XML/1998/namespace}id'] = '{}_{}_'.format(verse_id_tei, source) + sub_verse[0]
                 deva_pada.text = sub_verse[1]
         else:
             verse_deva = etree.SubElement(verse_container, "lg")
             verse_deva.attrib[
-                '{http://www.w3.org/XML/1998/namespace}id'] = verse_id_tei + '_eichler'
+                '{http://www.w3.org/XML/1998/namespace}id'] = '{}_{}'.format(verse_id_tei, source)
             verse_deva.attrib[
-                '{http://www.w3.org/XML/1998/namespace}lang'] = 'san-Deva'
+                '{http://www.w3.org/XML/1998/namespace}lang'] = source
             verse_deva.attrib[
                 'source'] = 'eichler'
 
             deva_pada = etree.SubElement(verse_deva, "l")
             verse_deva.attrib[
-                '{http://www.w3.org/XML/1998/namespace}id'] = verse_id_tei + '_eichler_0'
+                '{http://www.w3.org/XML/1998/namespace}id'] = verse_id_tei + '{}_{}_0'.format(verse_id_tei, source)
             deva_pada.attrib[
-                '{http://www.w3.org/XML/1998/namespace}lang'] = 'san-Deva'
+                '{http://www.w3.org/XML/1998/namespace}lang'] = lang
             deva_pada.attrib[
-                'source'] = 'eichler'
+                'source'] = source
             deva_pada.text = verse[0]
     return verse_container
 
@@ -527,9 +527,9 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
                                      id='vnh')
 
                 # aufrecht
-                set_half_based_verse(verse_container=verse_container, verse=aufrecht.get(verse_id),
+                set_mixed(verse_container=verse_container, verse=aufrecht.get(verse_id),
                                      verse_id_tei=verse_id_tei, lang='san-Latn-x-ISO-15919',
-                                     id='aufrecht')
+                                     source='aufrecht')
 
                 # padapatha
 
@@ -537,8 +537,8 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
                               verse_id_tei=verse_id_tei)
 
                 # deva (eichler)
-                set_eichler(verse_container=verse_container, verse=eichler.get(verse_id),
-                            verse_id_tei=verse_id_tei)
+                set_mixed(verse_container=verse_container, verse=eichler.get(verse_id),
+                            verse_id_tei=verse_id_tei, lang='san-Deva', source=eichler)
 
                 # TRANSLATIONS
 
