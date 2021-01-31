@@ -90,40 +90,40 @@ def set_stanza_properties(verse_container, verse_in_stanza_properties, verse_id_
 
 def set_half_based_verse(verse_container, verse, verse_id_tei, lang, id):
     if verse:
-        verse_gr = etree.SubElement(verse_container, "lg")
-        verse_gr.attrib[
+        hbv = etree.SubElement(verse_container, "lg")
+        hbv.attrib[
             '{http://www.w3.org/XML/1998/namespace}id'] = verse_id_tei + '_{}'.format(id)
 
-        verse_gr.attrib[
+        hbv.attrib[
             '{http://www.w3.org/XML/1998/namespace}lang'] = lang
-        verse_gr.attrib['source'] = id
+        hbv.attrib['source'] = id
 
         for sub_verse in verse:
-            gr_pada = etree.SubElement(verse_gr, "l")
-            gr_pada.attrib[
+            sv = etree.SubElement(hbv, "l")
+            sv.attrib[
                 '{http://www.w3.org/XML/1998/namespace}id'] = verse_id_tei + '_{}_'.format(id) + sub_verse[0]
-            gr_pada.text = sub_verse[1]
+            sv.text = unicodedata.normalize('NFC', sub_verse[1])
 
     return verse_container
 
 
 def set_verse(verse_container, verse, verse_id_tei, lang, id):
     if verse:
-        geldner_container = etree.SubElement(verse_container, 'lg')
-        geldner_de_id_tei = verse_id_tei + '_{}'.format(id)
-        geldner_container.attrib[
-            '{http://www.w3.org/XML/1998/namespace}id'] = geldner_de_id_tei
-        geldner_container.attrib[
+        v = etree.SubElement(verse_container, 'lg')
+        v_id_tei = verse_id_tei + '_{}'.format(id)
+        v.attrib[
+            '{http://www.w3.org/XML/1998/namespace}id'] = v_id_tei
+        v.attrib[
             '{http://www.w3.org/XML/1998/namespace}lang'] = lang
-        geldner_container.attrib['source'] = id
+        v.attrib['source'] = id
 
-        geldner_de = etree.SubElement(geldner_container, 'l')
-        geldner_de_id_tei_0 = verse_id_tei + '_{}_0'.format(id)
-        geldner_de.attrib[
-            '{http://www.w3.org/XML/1998/namespace}id'] = geldner_de_id_tei_0
-        geldner_de.attrib[
+        sv = etree.SubElement(v, 'l')
+        sv_id_tei_0 = verse_id_tei + '_{}_0'.format(id)
+        sv.attrib[
+            '{http://www.w3.org/XML/1998/namespace}id'] = sv_id_tei_0
+        sv.attrib[
             '{http://www.w3.org/XML/1998/namespace}lang'] = lang
-        geldner_de.text = verse
+        sv.text = unicodedata.normalize('NFC', verse)
 
     return verse_container
 
@@ -152,7 +152,7 @@ def set_padapatha(verse_container, verse, verse_id_tei):
                 '{http://www.w3.org/XML/1998/namespace}id'] = verse_id_tei + '_padapatha_0_' + str(i + 1).zfill(
                 2)
 
-            padapatha_token.text = token.strip()
+            padapatha_token.text = unicodedata.normalize('NFC',token.strip())
 
     return verse_container
 
@@ -161,35 +161,35 @@ def set_mixed(verse_container, verse, verse_id_tei, lang, source):
     if verse:
         # some verses have not subverses e.g. (eichler) 07.034.01; 01.065.01(aufrecht)
         if isinstance(verse[0], list):
-            verse_deva = etree.SubElement(verse_container, "lg")
-            verse_deva.attrib[
+            v = etree.SubElement(verse_container, "lg")
+            v.attrib[
                 '{http://www.w3.org/XML/1998/namespace}id'] = '{}_{}'.format(verse_id_tei, source)
-            verse_deva.attrib[
+            v.attrib[
                 '{http://www.w3.org/XML/1998/namespace}lang'] = lang
-            verse_deva.attrib[
+            v.attrib[
                 'source'] = source
             for sub_verse in verse:
-                deva_pada = etree.SubElement(verse_deva, "l")
-                deva_pada.attrib[
+                sv = etree.SubElement(v, "l")
+                sv.attrib[
                     '{http://www.w3.org/XML/1998/namespace}id'] = '{}_{}_'.format(verse_id_tei, source) + sub_verse[0]
-                deva_pada.text = sub_verse[1]
+                sv.text = unicodedata.normalize('NFC',sub_verse[1])
         else:
-            verse_deva = etree.SubElement(verse_container, "lg")
-            verse_deva.attrib[
+            v = etree.SubElement(verse_container, "lg")
+            v.attrib[
                 '{http://www.w3.org/XML/1998/namespace}id'] = '{}_{}'.format(verse_id_tei, source)
-            verse_deva.attrib[
+            v.attrib[
                 '{http://www.w3.org/XML/1998/namespace}lang'] = lang
-            verse_deva.attrib[
+            v.attrib[
                 'source'] = source
 
-            deva_pada = etree.SubElement(verse_deva, "l")
-            verse_deva.attrib[
+            sv = etree.SubElement(v, "l")
+            sv.attrib[
                 '{http://www.w3.org/XML/1998/namespace}id'] = '{}_{}_0'.format(verse_id_tei, source)
-            deva_pada.attrib[
+            sv.attrib[
                 '{http://www.w3.org/XML/1998/namespace}lang'] = lang
-            deva_pada.attrib[
+            sv.attrib[
                 'source'] = source
-            deva_pada.text = verse[0]
+            sv.text = unicodedata.normalize('NFC',verse[0])
     return verse_container
 
 
@@ -528,8 +528,8 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
 
                 # aufrecht
                 set_mixed(verse_container=verse_container, verse=aufrecht.get(verse_id),
-                                     verse_id_tei=verse_id_tei, lang='san-Latn-x-ISO-15919',
-                                     source='aufrecht')
+                          verse_id_tei=verse_id_tei, lang='san-Latn-x-ISO-15919',
+                          source='aufrecht')
 
                 # padapatha
 
@@ -538,7 +538,7 @@ def verses_into_tei(rv, grassmann_enum, leipzig_mapping, addresees, stanza_prope
 
                 # deva (eichler)
                 set_mixed(verse_container=verse_container, verse=eichler.get(verse_id),
-                            verse_id_tei=verse_id_tei, lang='san-Deva', source='eichler')
+                          verse_id_tei=verse_id_tei, lang='san-Deva', source='eichler')
 
                 # TRANSLATIONS
 
