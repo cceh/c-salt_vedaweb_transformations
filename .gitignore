@@ -1,0 +1,3 @@
+.env/
+condaenv*/
+__pycache__/
