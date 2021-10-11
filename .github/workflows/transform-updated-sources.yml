@@ -1,0 +1,23 @@
+name: Transform Updated Sources
+on: workflow_dispatch
+jobs:
+  Transform-Updated-Sources:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Sources Repo
+        uses: actions/checkout@v2
+        with:
+          repository: cceh/c-salt_vedaweb_sources
+          path: /tmp/vw-sources
+      - name: Run Transformations
+        uses: actions/checkout@v2
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: vw-transformations
+          environment-file: environment.yml
+          python-version: 3.8
+          auto-activate-base: false
+        run: python transform.py /tmp/vw-sources ./output
+      # temporary - for debugging
+      - name: Publish To TEI Repo
+        run: ls -lah ./output
