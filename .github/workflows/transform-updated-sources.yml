@@ -7,21 +7,23 @@ jobs:
       run:
         shell: bash -l {0}
     steps:
+      - name: Clone Transformations Repo
+        uses: actions/checkout@v2
+        with:
+          path: transformations
       - name: Clone Sources Repo
         uses: actions/checkout@v2
         with:
           repository: cceh/c-salt_vedaweb_sources
-          path: vw-sources
-      - name: Clone Transformations Repo
-        uses: actions/checkout@v2
+          path: sources
       - name: Prepare Environment
         uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: vw-transformations
-          environment-file: environment.yml
+          environment-file: transformations/environment.yml
           auto-activate-base: false
       - name: Run Transformations
-        run: python transform.py vw-sources output
+        run: python transformations/transform.py sources output
       # temporary - for debugging
       - name: Publish To TEI Repo
         run: ls -lah output
