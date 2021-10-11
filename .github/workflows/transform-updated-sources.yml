@@ -16,6 +16,11 @@ jobs:
         with:
           repository: cceh/c-salt_vedaweb_sources
           path: sources
+      - name: Clone TEI Repo
+        uses: actions/checkout@v2
+        with:
+          repository: cceh/c-salt_vedaweb_tei
+          path: tei
       - name: Prepare Environment
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -23,7 +28,12 @@ jobs:
           environment-file: transformations/environment.yml
           auto-activate-base: false
       - name: Run Transformations
-        run: python transformations/transform.py sources output
+        run: python transformations/transform.py sources tei
       # temporary - for debugging
       - name: Publish To TEI Repo
-        run: ls -lah output
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions"
+          cd tei
+          git add --all
+          git status
