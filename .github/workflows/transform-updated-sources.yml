@@ -3,6 +3,9 @@ on: workflow_dispatch
 jobs:
   Transform-Updated-Sources:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
     steps:
       - name: Clone Sources Repo
         uses: actions/checkout@v2
