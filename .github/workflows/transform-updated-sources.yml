@@ -9,7 +9,7 @@ jobs:
         with:
           repository: cceh/c-salt_vedaweb_sources
           path: /tmp/vw-sources
-      - name: Run Transformations
+      - name: Prepare Environment
         uses: actions/checkout@v2
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -17,6 +17,7 @@ jobs:
           environment-file: environment.yml
           python-version: 3.8
           auto-activate-base: false
+      - name: Run Transformations
         run: python transform.py /tmp/vw-sources ./output
       # temporary - for debugging
       - name: Publish To TEI Repo
