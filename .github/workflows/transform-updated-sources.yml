@@ -19,7 +19,6 @@ jobs:
         with:
           activate-environment: vw-transformations
           environment-file: environment.yml
-          python-version: 3.8
           auto-activate-base: false
       - name: Run Transformations
         run: python transform.py ./vw-sources ./output
