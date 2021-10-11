@@ -8,7 +8,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: cceh/c-salt_vedaweb_sources
-          path: /tmp/vw-sources
+          path: ./vw-sources
       - name: Clone Transformations Repo
         uses: actions/checkout@v2
       - name: Prepare Environment
@@ -19,7 +19,7 @@ jobs:
           python-version: 3.8
           auto-activate-base: false
       - name: Run Transformations
-        run: python transform.py /tmp/vw-sources ./output
+        run: python transform.py ./vw-sources ./output
       # temporary - for debugging
       - name: Publish To TEI Repo
         run: ls -lah ./output
