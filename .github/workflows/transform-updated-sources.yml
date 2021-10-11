@@ -9,8 +9,9 @@ jobs:
         with:
           repository: cceh/c-salt_vedaweb_sources
           path: /tmp/vw-sources
-      - name: Prepare Environment
+      - name: Clone Transformations Repo
         uses: actions/checkout@v2
+      - name: Prepare Environment
         uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: vw-transformations
