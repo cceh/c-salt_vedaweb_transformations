@@ -1,3 +1,4 @@
 .env/
+.vscode/
 condaenv*/
 __pycache__/
