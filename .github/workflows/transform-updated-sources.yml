@@ -30,6 +30,8 @@ jobs:
           auto-activate-base: false
       - name: Run Transformations
         run: python transformations/transform.py $(realpath sources) $(realpath tei)
+      - name: Validate Transformations
+        run: python transformations/validate.py $(realpath tei)
       # temporary - for debugging
       - name: Publish To TEI Repo
         run: |
