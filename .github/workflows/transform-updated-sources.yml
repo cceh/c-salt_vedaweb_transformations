@@ -45,7 +45,7 @@ jobs:
           git config --local user.name "$GH_PUSH_USER"
           git add --all
           git commit -m "Apply changes made in source repo [automatic]"
-          git push https://$GH_PUSH_USER:$GH_PUSH_PAM@github.com/cceh/c-salt_vedaweb_tei
+          git push https://$GH_PUSH_USER:$GH_PUSH_PAM@github.com/cceh/c-salt_vedaweb_tei.git
         env:
           GH_PUSH_PAM: ${{ secrets.PAM_TEI_PUSH }}
           GH_PUSH_USER: github-actions
