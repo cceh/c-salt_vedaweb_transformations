@@ -7,42 +7,45 @@ jobs:
       run:
         shell: bash -l {0}
     steps:
-      - name: Clone Transformations Repo
+      - name: Clone transformations repo
         uses: actions/checkout@v2
         with:
           path: transformations
-      - name: Clone Sources Repo
+      - name: Clone sources repo
         uses: actions/checkout@v2
         with:
           repository: cceh/c-salt_vedaweb_sources
           path: sources
-      - name: Clone TEI Repo
+      - name: Clone TEI repo
         uses: actions/checkout@v2
         with:
           repository: cceh/c-salt_vedaweb_tei
           path: tei
           fetch-depth: 0
-      - name: Prepare Environment
+      - name: Prepare environment
         uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: vw-transformations
           environment-file: transformations/environment.yml
           auto-activate-base: false
-      - name: Run Transformations
+      - name: Run transformations
         run: python transformations/transform.py $(realpath sources) $(realpath tei)
-      - name: Validate Transformations
+      - name: Validate transformations
         run: python transformations/validate.py $(realpath tei)
-      # temporary - for debugging
-      - name: Publish To TEI Repo
+      - name: Check for diff in TEI
         run: |
           cd tei
-          git status
-          echo
-          echo
+          if ! git diff --quiet; then exit 0; else exit 1; fi
+        continue-on-error: true
+      - name: Push updates to TEI repo
+        if: success()
+        run: |
+          cd tei
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions"
+          git config --local user.name "$GH_PUSH_USER"
           git add --all
-          git status
-          echo
-          echo
-          ls -lah
+          git commit -m "Apply changes made in source repo [automatic]"
+          git push https://$GH_PUSH_USER:$GH_PUSH_PAM@github.com/cceh/c-salt_vedaweb_tei
+        env:
+          GH_PUSH_PAM: ${{ secrets.PAM_TEI_PUSH }}
+          GH_PUSH_USER: github-actions
