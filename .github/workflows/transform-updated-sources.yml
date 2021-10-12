@@ -28,7 +28,7 @@ jobs:
           environment-file: transformations/environment.yml
           auto-activate-base: false
       - name: Run Transformations
-        run: python transformations/transform.py sources tei
+        run: python transformations/transform.py $(realpath sources) $(realpath tei)
       # temporary - for debugging
       - name: Publish To TEI Repo
         run: |
@@ -37,3 +37,6 @@ jobs:
           git config --local user.name "github-actions"
           git add --all
           git status
+          echo
+          echo
+          ls -lah
