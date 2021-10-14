@@ -22,7 +22,7 @@ jobs:
           repository: cceh/c-salt_vedaweb_tei
           path: tei
           fetch-depth: 0
-          token: ${{ secrets.PAM_TEI_REPO }}
+          token: ${{ secrets.PAM_TEI_PUSH }}
       - name: Prepare environment
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -46,7 +46,7 @@ jobs:
           git config --local user.name "$GH_ACTIONS_USER"
           git add --all
           git commit -m "Apply changes made in source repo [automatic]"
-          git push https://$GH_ACTIONS_USER:$PAM_TEI_REPO@github.com/cceh/c-salt_vedaweb_tei.git
+          git push https://$GH_ACTIONS_USER:$PAM_TEI_PUSH@github.com/cceh/c-salt_vedaweb_tei.git
         env:
-          PAM_TEI_REPO: ${{ secrets.PAM_TEI_REPO }}
+          PAM_TEI_PUSH: ${{ secrets.PAM_TEI_PUSH }}
           GH_ACTIONS_USER: github-actions
